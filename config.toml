@@ -1,6 +1,6 @@
 baseURL = 'http://example.org/'
 languageCode = 'en-us'
-title = 'Learning to Learn'
+title = 'Nyble'
 
 [params]
     contentTypeName = "posts"
@@ -11,7 +11,7 @@ title = 'Learning to Learn'
 
 [languages]
     [languages.en]
-        title = "Learning to Learn"
+        title = "Nyble"
         subtitle = "A development blog covering a bunch of different topics"
         keywords = ""
         copyright = ""
@@ -20,11 +20,11 @@ title = 'Learning to Learn'
         readOtherPosts = "Read other posts"
 
         [languages.en.params.logo]
-            logoText = "Learning to Learn"
+            logoText = "Nyble"
             logoHomeLink = "/"
 
         [languages.en.menu]
             [[languages.en.menu.main]]
-                identifier = "about"
-                name = "About"
-                url = "/about"
+                identifier = "author"
+                name = "Author"
+                url = "/author"
