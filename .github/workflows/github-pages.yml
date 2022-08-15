@@ -10,9 +10,9 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
+          submodules: recursive  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Setup Hugo
@@ -21,9 +21,6 @@ jobs:
           hugo-version: 'latest'
 
       - name: Build
-        uses: actions/checkout@v3
-          with:
-            submodules: recursive
         run: hugo --minify
 
       - name: Deploy
