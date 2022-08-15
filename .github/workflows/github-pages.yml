@@ -21,6 +21,9 @@ jobs:
           hugo-version: 'latest'
 
       - name: Build
+        uses: actions/checkout@v3
+          with:
+            submodules: recursive
         run: hugo --minify
 
       - name: Deploy
