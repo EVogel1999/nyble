@@ -154,3 +154,87 @@ function getPayout() public view returns (uint256) {
 Last but not least, we also need to provide a way to easily get the total payout for the Job.  This isn't strictly necessary as you can do this with frontend javascript libraries but contains another interesting modifier we haven't come across yet.  The ```view``` modifier is a modifier that allows the address to read the value from the blockchain **gas-free**.
 
 In blockchain applications, every transaction onto the chain costs ETH (or the blockchain's native token).  So when you declare something as ```view``` or ```pure``` then that particular action isn't changing the chain's state, only reading from it and doesn't count as a transaction.
+
+## Accepting a Job
+
+Now that the client can deposit ETH for the job into the smart contract, we need to write the functionality for a group of people to accept the job.  We need to include the ability to record the whole percentages of the cut for each team member.
+
+{{< code language="solidity" title="Job.sol" id="5" expand="Show" collapse="Hide" isCollapsed="false" >}}
+// Team information
+address[] private members;
+uint8[] private shares;
+
+/**
+ * Accepts a job with a given team array and the shares for each team member
+ */
+function acceptJob(address[] memory m, uint8[] memory s) external notClient {
+    // Check members and shares are defined and same length
+    require(m.length == s.length, "Team members and shares must be same length");
+    require(m.length > 0, "Team must have at least one member");
+    require (state == JobState.WAITING, "Job must be awaiting team");
+
+    // Check the total shares is equal to 100 (100%)
+    uint8 total = 0;
+    for (uint i = 0; i < s.length; i++) {
+        total += s[i];
+    }
+    require (total == 100, "Shares must total to 100");
+
+    // Set team members
+    members = m;
+    shares = s;
+
+    // Set contract state to accepted
+    state = JobState.ACCEPTED;
+}
+{{< /code >}}
+
+The first three ```require``` statements check that the team members and shares match, that there is at least one member in the team, and that the job is waiting for someone to accept it.
+
+The for loop checks that the shares array total to 100 (or 100%).  If it passes those checks then the members and their shares are recorded and the job's state moves to the next state.
+
+## Completing a Job
+
+The only thing that's left for this contract is for the client to complete and close out the job, automating the payments to the team members.  To do the payments safely and securely, we will be using another contract called ```Open Zeppelin```.  Open Zeppelin is a blockchain security company that offers a library of secure solidity contracts for the community to use.
+
+We install these contracts through ```npm```:
+
+```
+npm i @openzeppelin/contracts
+```
+
+Then we import it using the ```import``` statement:
+
+{{< code language="solidity" title="Job.sol" id="6" expand="Show" collapse="Hide" isCollapsed="false" >}}
+//SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/utils/Address.sol";
+
+contract Job {
+    // ...
+}
+{{< /code >}}
+
+{{< code language="solidity" title="Job.sol" id="7" expand="Show" collapse="Hide" isCollapsed="false" >}}
+/**
+ * Completes a job and sends out the payment to the team
+ */
+function complete() external isClient {
+    require(state == JobState.ACCEPTED, "Job must be accepted to complete");
+
+    // Set job state
+    state = JobState.COMPLETED;
+
+    // Payout each team member
+    uint256 totalPayout = this.getPayout();
+    for (uint i = 0; i < members.length; i++) {
+        uint256 cut = (totalPayout * shares[i]) / 100;
+        Address.sendValue(payable(members[i]), cut);
+    }
+}
+{{< /code >}}
+
+The complete function only needs to check that the job is in the accepted state, so it can later be moved to completed.  Then we iterate through each team member and automate payments to them using Open Zeppelin's ```Address``` contract.
+
+What's important to note here is that **solidity doesn't have decimals**, so the ```cut``` needs to be a whole number.  This is why the member's share is multiplied by the total payout and divided by 100.
