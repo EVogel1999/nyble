@@ -9,16 +9,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-20.04
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
 
       - name: Build
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
         run: hugo --minify
 
       - name: Deploy

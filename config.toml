@@ -1,6 +1,7 @@
 baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = 'Nyble'
+theme = 'terminal'
 
 [params]
     contentTypeName = "posts"
