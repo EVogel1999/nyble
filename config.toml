@@ -1,4 +1,4 @@
-baseURL = 'https://EVogel1999.github.io/nyble'
+baseURL = 'https://evogel1999.github.io/nyble'
 languageCode = 'en-us'
 title = 'Nyble'
 theme = 'terminal'
@@ -22,7 +22,7 @@ theme = 'terminal'
 
         [languages.en.params.logo]
             logoText = "Nyble"
-            logoHomeLink = "/"
+            logoHomeLink = "/nyble"
 
         [languages.en.menu]
             [[languages.en.menu.main]]

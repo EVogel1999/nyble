@@ -4,7 +4,7 @@ date = "2022-08-15"
 author = "Emily Vogel"
 +++
 
-{{< image src="/img/emily-vogel.jpeg" alt="Picture of Emily Vogel" style="border-radius: 8px; width: 250px;" >}}
+{{< image src="/nyble/img/emily-vogel.jpeg" alt="Picture of Emily Vogel" style="border-radius: 8px; width: 250px;" >}}
 
 # Emily Vogel
 

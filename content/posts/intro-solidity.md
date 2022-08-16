@@ -3,7 +3,7 @@ title = "Intro to Solidity"
 date = "2022-08-15"
 cover = "img/intro-solidity.jpeg"
 author = "Emily Vogel"
-draft = "False"
+draft = "True"
 description = "Solidity is a new and upcoming language that is used for EVM-based blockchain programming.  Learn some of the fundamentals behind the language by setting up a new hardhat project and coding a simple smart contract!"
 +++
 
