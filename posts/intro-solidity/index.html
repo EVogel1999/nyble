@@ -42,7 +42,7 @@ event PaymentReceived(address from, uint256 amount);
  * Deposits ether to the contract
  */
 function deposit() payable public isClient {
-    // Emit an event saying the contract recieved the deposit
+    // Emit an event saying the contract received the deposit
     emit PaymentReceived(msg.sender, msg.value);
 }
 
@@ -244,7 +244,7 @@ contract Job {
      * Deposits ether to the contract
      */
     function deposit() payable public isClient {
-        // Emit an event saying the contract recieved the deposit
+        // Emit an event saying the contract received the deposit
         emit PaymentReceived(msg.sender, msg.value);
     }
 
@@ -346,6 +346,7 @@ async main () =&gt; {
 }
     
 main();
-</code></pre></div></div></div></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2022 Powered by <a href=http://gohugo.io>Hugo</a></span>
+</code></pre></div></div></div><div class=pagination><div class=pagination__title><span class=pagination__title-h>Read other posts</span><hr></div><div class=pagination__buttons><span class="button previous"><a href=https://evogel1999.github.io/nyble/posts/getting-candy-machine-nfts/><span class=button__icon>←</span>
+<span class=button__text>How to Programmatically get Candy Machine NFTs</span></a></span></div></div></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2022 Powered by <a href=http://gohugo.io>Hugo</a></span>
 <span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span></div></div></footer><script src=https://evogel1999.github.io/nyble/assets/main.js></script>
 <script src=https://evogel1999.github.io/nyble/assets/prism.js></script></div></body></html>

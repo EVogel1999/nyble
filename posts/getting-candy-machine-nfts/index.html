@@ -1,0 +1,74 @@
+<!doctype html><html lang=en><head><title>How to Programmatically get Candy Machine NFTs :: Nyble</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Solana is a very popular blockchain that is a lot more efficient that Ethereum.  The lower gas fees and higher transaction throughput made it ideal for NFTs and innovations surrounding them.  In this post, we'll learn how to programmatically retrieve NFT data using node and @solana/web3.js."><meta name=keywords content><meta name=robots content="noodp"><link rel=canonical href=https://evogel1999.github.io/nyble/posts/getting-candy-machine-nfts/><link rel=stylesheet href=https://evogel1999.github.io/nyble/assets/style.css><link rel=stylesheet href=https://evogel1999.github.io/nyble/assets/green.css><link rel=apple-touch-icon href=https://evogel1999.github.io/nyble/img/apple-touch-icon-192x192.png><link rel="shortcut icon" href=https://evogel1999.github.io/nyble/img/favicon/green.png><meta name=twitter:card content="summary"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="og:title" content="How to Programmatically get Candy Machine NFTs"><meta property="og:description" content="Solana is a very popular blockchain that is a lot more efficient that Ethereum.  The lower gas fees and higher transaction throughput made it ideal for NFTs and innovations surrounding them.  In this post, we'll learn how to programmatically retrieve NFT data using node and @solana/web3.js."><meta property="og:url" content="https://evogel1999.github.io/nyble/posts/getting-candy-machine-nfts/"><meta property="og:site_name" content="Nyble"><meta property="og:image" content="https://evogel1999.github.io/nyble/img/candy-machine.jpeg"><meta property="og:image:width" content="2048"><meta property="og:image:height" content="1024"><meta property="article:published_time" content="2022-10-29 00:00:00 +0000 UTC"></head><body class=green><div class="container center headings--one-size"><header class=header><div class=header__inner><div class=header__logo><a href=/nyble><div class=logo>Nyble</div></a></div><div class=menu-trigger>menu</div></div><nav class=menu><ul class="menu__inner menu__inner--desktop"><li><a href=/nyble/author>Author</a></li></ul><ul class="menu__inner menu__inner--mobile"><li><a href=/nyble/author>Author</a></li></ul></nav></header><div class=content><div class=post><h1 class=post-title><a href=https://evogel1999.github.io/nyble/posts/getting-candy-machine-nfts/>How to Programmatically get Candy Machine NFTs</a></h1><div class=post-meta><span class=post-date>2022-10-29</span>
+<span class=post-author>:: Emily Vogel</span></div><img src=https://evogel1999.github.io/nyble/img/candy-machine.jpeg class=post-cover alt="How to Programmatically get Candy Machine NFTs" title="Cover Image"><div class=post-content><div><h1 id=introduction>Introduction<a href=#introduction class=hanchor arialabel=Anchor>&#8983;</a></h1><p><a href=https://solana.com/>Solana</a> is another very popular blockchain that is drastically different from EVM-based blockchains. Instead of Proof of Stake, Solana uses Proof of History. This has made Solana, in comparison with Ethereum, faster and have lower gas fees. Additionally, Solana has a dedicated team working on NFT related programs called <a href=https://www.metaplex.com/>Metaplex</a>. This team has created many different tools such as CLIs, customizable storefronts, and <a href=https://studio.metaplex.com/>no-code</a> solutions.</p><p>Solana has become integral to the NFT community and innovation, therefore it&rsquo;s important to learn how to work with Solana smart contract programs. A simple way to start is retrieving all the NFTs (minted or not) from a specific Candy Machine V2 address. <a href=https://docs.metaplex.com/programs/candy-machine/overview>Candy Machine</a> is a type of program that operates similarly to a gumball machine. When people buy an NFT from the machine, it mints them a random NFT from the collection instead of a specific one.</p><h2 id=technology-requirements>Technology Requirements<a href=#technology-requirements class=hanchor arialabel=Anchor>&#8983;</a></h2><p>To follow along with this post you need the following installed on your machine:</p><ul><li><a href=https://nodejs.org/en/download/>Node.js</a></li><li><a href=https://code.visualstudio.com/Download>Visual Studio Code</a></li></ul><h2 id=prerequisites>Prerequisites<a href=#prerequisites class=hanchor arialabel=Anchor>&#8983;</a></h2><p>To fully follow along with this post it&rsquo;s assumed that you know how to work with <code>node.js</code> and <code>javascript</code>. Also, you will need to understand some key javascript concepts like <code>async/await</code>.</p><p>Here are some resources if you need to learn these concepts:</p><ul><li><a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU">Net Ninja: Node.js Crash Course Tutorial</a></li><li><a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jx2TTZk3IGWKSbtugYdrlu">Net Ninja: Asynchronous Javascript Tutorial</a></li></ul><h1 id=project-setup>Project Setup<a href=#project-setup class=hanchor arialabel=Anchor>&#8983;</a></h1><p>To setup the project, create a new directory that we will be working in. After that, init a new node project using the following command:</p><pre tabindex=0><code>npm init -y
+</code></pre><p>You will also need to install the <a href=https://www.npmjs.com/package/@solana/web3.js>@solana/web3.js</a> dependency in order to work with the Candy Machine:</p><pre tabindex=0><code>npm i @solana/web3.js
+</code></pre><p>For the sake of simplicity, we&rsquo;ll be coding everything in one javascript function. So the following setup will be used:</p><div class=collapsable-code><input id=1 type=checkbox>
+<label for=1><span class=collapsable-code__language>javascript</span>
+<span class=collapsable-code__title>main.js</span>
+<span class=collapsable-code__toggle data-label-expand=Show data-label-collapse=Hide></span></label><pre class=language-javascript><code>
+async function main() {
+    // TODO: Write code
+}
+
+main();
+</code></pre></div><h1 id=creating-a-blockchain-connection>Creating a Blockchain Connection<a href=#creating-a-blockchain-connection class=hanchor arialabel=Anchor>&#8983;</a></h1><p>It&rsquo;s rather easy to connect to the Solana blockchain. The @solana/web3.js package handles this part almost entirely by itself. To connect to the Solana mainnet, you code the following in javascript:</p><div class=collapsable-code><input id=2 type=checkbox>
+<label for=2><span class=collapsable-code__language>javascript</span>
+<span class=collapsable-code__title>main.js</span>
+<span class=collapsable-code__toggle data-label-expand=Show data-label-collapse=Hide></span></label><pre class=language-javascript><code>
+import { Connection, clusterApiUrl } from &#39;@solana/web3.js&#39;;
+
+async function main() {
+    const connection = new Connection(clusterApiUrl(&#39;mainnet-beta&#39;));
+}
+</code></pre></div><p>This connection is used to interact with the Solana blockchain. In order to write data to the chain you will need your own public and private key; however, for reading data from the chain, you don&rsquo;t need your own key.</p><h1 id=getting-the-account-info>Getting the Account Info<a href=#getting-the-account-info class=hanchor arialabel=Anchor>&#8983;</a></h1><p>Getting a specific key&rsquo;s information requires knowing the public key of a Candy Machine. For this post, lets use the public key <code>9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD</code>. Any specific Candy Machine V2 address will work though, not just this address.</p><p>To get started, we need to get the Account Info from the Candy Machine. Depending on the program type, this account information can look different and hold different values. The code for getting the Account Info is as follows:</p><div class=collapsable-code><input id=3 type=checkbox>
+<label for=3><span class=collapsable-code__language>javascript</span>
+<span class=collapsable-code__title>main.js</span>
+<span class=collapsable-code__toggle data-label-expand=Show data-label-collapse=Hide></span></label><pre class=language-javascript><code>
+import { Connection, clusterApiUrl, PublicKey } from &#39;@solana/web3.js&#39;;
+
+async function main() {
+    // Generate public key
+    const key = new PublicKey(&#34;9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&#34;);
+
+    // Get account info with key
+    const info = await connection.getAccountInfo(key);
+}
+</code></pre></div><p>We have to ensure that the string public key conforms to the cryptographic public key that is an acceptable parameter when getting the Account Info for the key. From this info, we can get some basic information about the account such as it&rsquo;s <code>Owner</code> and <code>Lamports</code> (a lamport is a fraction of a SOL, the cryptocurrency used to pay gas fees). You can also pass this information to other Metaplex or Solana packages to get more information out of them (such as the <code>CandyMachine</code> class from <a href=https://www.npmjs.com/package/@metaplex-foundation/mpl-candy-machine>@metaplex-foundation/mpl-candy-machine</a>).</p><h1 id=parsing-the-data-buffer>Parsing the Data Buffer<a href=#parsing-the-data-buffer class=hanchor arialabel=Anchor>&#8983;</a></h1><p>The information that we need about the NFTs are located in <code>info.data</code>. However, there is one small problem that we need to work through first: <code>data</code> is a very long buffer that we need to parse through. Thankfully, the information is chunked in such a way that it&rsquo;s easy to parse through and get specific information about the Candy Machine.</p><p>Each NFT has a 4 byte separator, name length of 32 bytes, followed by another 4 byte separator, then followed by 200 bytes for the URL of the metadata. The NFT metadata starts at byte 717. So to get the first NFT from the buffer, the code would look like the following:</p><div class=collapsable-code><input id=4 type=checkbox>
+<label for=4><span class=collapsable-code__language>javascript</span>
+<span class=collapsable-code__title>main.js</span>
+<span class=collapsable-code__toggle data-label-expand=Show data-label-collapse=Hide></span></label><pre class=language-javascript><code>
+async function main() {
+    info.data.slice(717, 717 &#43; 4 &#43; 32 &#43; 4 &#43; 200);
+}
+</code></pre></div><p>In order to get just the first URL of the NFT, it&rsquo;d look like the following:</p><div class=collapsable-code><input id=5 type=checkbox>
+<label for=5><span class=collapsable-code__language>javascript</span>
+<span class=collapsable-code__title>main.js</span>
+<span class=collapsable-code__toggle data-label-expand=Show data-label-collapse=Hide></span></label><pre class=language-javascript><code>
+async function main() {
+    let url = info.data.slice(717 &#43; 4 &#43; 32 &#43; 4, 717 &#43; 4 &#43; 32 &#43; 4 &#43; 200).toString();
+    url = url.substring(0, url.indexOf(&#39;\x00&#39;));
+}
+</code></pre></div><p>The code for getting just the URL looks a little different because we are cleaning up the URL string to remove the empty buffer values of <code>\x00</code>.</p><p>From this, you can abstract out the code so it loops to the end of the buffer to get all the NFT URLs in the Candy Machine. You can also setup pagination so you can only show 5 NFTs per page to speed up performance. To get the NFT metadata programmatically, all you will need to do is make a network request using <a href=https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API>Fetch</a> or <a href=https://www.npmjs.com/package/axios>Axios</a>.</p><h1 id=conclusion>Conclusion<a href=#conclusion class=hanchor arialabel=Anchor>&#8983;</a></h1><p>In conclusion, Solana is a very popular blockchain for NFTs because of its low gas fees and official programs dedicated to innovating and working with the NFT protocol. A simple way to get started working with Solana is by working with the @solana/web3.js dependency to view the NFTs of a Candy Machine V2 address. Candy Machine is a type of program maintained by Metaplex.</p><p>Additionally, there are other packages that are maintained by Metaplex that will do similar things to this post such as their new <a href=https://github.com/metaplex-foundation/js>Javascript SDK</a>. However, the point of this post was to work closer with the protocols, programs, and packages rather then it be abstracted out by the SDK which is why it was avoided in this post.</p><h1 id=full-code>Full Code<a href=#full-code class=hanchor arialabel=Anchor>&#8983;</a></h1><div class=collapsable-code><input id=1 type=checkbox>
+<label for=1><span class=collapsable-code__language>javascript</span>
+<span class=collapsable-code__title>main.js</span>
+<span class=collapsable-code__toggle data-label-expand=Show data-label-collapse=Hide></span></label><pre class=language-javascript><code>
+import { Connection, clusterApiUrl, PublicKey } from &#39;@solana/web3.js&#39;;
+
+async function main() {
+    const connection = new Connection(clusterApiUrl(&#39;mainnet-beta&#39;));
+
+    // Generate public key
+    const key = new PublicKey(&#34;9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&#34;);
+
+    // Get account info with key
+    const info = await connection.getAccountInfo(key);
+
+    info.data.slice(717, 717 &#43; 4 &#43; 32 &#43; 4 &#43; 200);
+    let url = info.data.slice(717 &#43; 4 &#43; 32 &#43; 4, 717 &#43; 4 &#43; 32 &#43; 4 &#43; 200).toString();
+    url = url.substring(0, url.indexOf(&#39;\x00&#39;));
+}
+
+main();
+</code></pre></div></div></div><div class=pagination><div class=pagination__title><span class=pagination__title-h>Read other posts</span><hr></div><div class=pagination__buttons><span class="button next"><a href=https://evogel1999.github.io/nyble/posts/intro-solidity/><span class=button__text>Intro to Solidity</span>
+<span class=button__icon>→</span></a></span></div></div></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2022 Powered by <a href=http://gohugo.io>Hugo</a></span>
+<span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span></div></div></footer><script src=https://evogel1999.github.io/nyble/assets/main.js></script>
+<script src=https://evogel1999.github.io/nyble/assets/prism.js></script></div></body></html>
