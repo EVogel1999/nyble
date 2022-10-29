@@ -110,7 +110,7 @@ event PaymentReceived(address from, uint256 amount);
  * Deposits ether to the contract
  */
 function deposit() payable public isClient {
-    // Emit an event saying the contract recieved the deposit
+    // Emit an event saying the contract received the deposit
     emit PaymentReceived(msg.sender, msg.value);
 }
 
@@ -383,7 +383,7 @@ contract Job {
      * Deposits ether to the contract
      */
     function deposit() payable public isClient {
-        // Emit an event saying the contract recieved the deposit
+        // Emit an event saying the contract received the deposit
         emit PaymentReceived(msg.sender, msg.value);
     }
 
