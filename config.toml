@@ -1,4 +1,4 @@
-baseURL = 'https://evogel1999.github.io/nyble'
+baseURL = 'http://nyble.blog'
 languageCode = 'en-us'
 title = 'Nyble'
 theme = 'terminal'
