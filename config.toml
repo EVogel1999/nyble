@@ -1,4 +1,4 @@
-baseURL = 'http://nyble.blog'
+baseURL = 'https://nyble.blog'
 languageCode = 'en-us'
 title = 'Nyble'
 theme = 'terminal'
