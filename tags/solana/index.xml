@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>solana on Nyble</title><link>https://nyble.blog/tags/solana/</link><description>Recent content in solana on Nyble</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 29 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://nyble.blog/tags/solana/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Programmatically get Candy Machine NFTs</title><link>https://nyble.blog/posts/getting-candy-machine-nfts/</link><pubDate>Sat, 29 Oct 2022 00:00:00 +0000</pubDate><guid>https://nyble.blog/posts/getting-candy-machine-nfts/</guid><description>Introduction Solana is another very popular blockchain that is drastically different from EVM-based blockchains. Instead of Proof of Stake, Solana uses Proof of History. This has made Solana, in comparison with Ethereum, faster and have lower gas fees. Additionally, Solana has a dedicated team working on NFT related programs called Metaplex. This team has created many different tools such as CLIs, customizable storefronts, and no-code solutions.
+Solana has become integral to the NFT community and innovation, therefore it&amp;rsquo;s important to learn how to work with Solana smart contract programs.</description><content>&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>&lt;a href="https://solana.com/">Solana&lt;/a> is another very popular blockchain that is drastically different from EVM-based blockchains. Instead of Proof of Stake, Solana uses Proof of History. This has made Solana, in comparison with Ethereum, faster and have lower gas fees. Additionally, Solana has a dedicated team working on NFT related programs called &lt;a href="https://www.metaplex.com/">Metaplex&lt;/a>. This team has created many different tools such as CLIs, customizable storefronts, and &lt;a href="https://studio.metaplex.com/">no-code&lt;/a> solutions.&lt;/p>
+&lt;p>Solana has become integral to the NFT community and innovation, therefore it&amp;rsquo;s important to learn how to work with Solana smart contract programs. A simple way to start is retrieving all the NFTs (minted or not) from a specific Candy Machine V2 address. &lt;a href="https://docs.metaplex.com/programs/candy-machine/overview">Candy Machine&lt;/a> is a type of program that operates similarly to a gumball machine. When people buy an NFT from the machine, it mints them a random NFT from the collection instead of a specific one.&lt;/p>
+&lt;h2 id="technology-requirements">Technology Requirements&lt;/h2>
+&lt;p>To follow along with this post you need the following installed on your machine:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://nodejs.org/en/download/">Node.js&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://code.visualstudio.com/Download">Visual Studio Code&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="prerequisites">Prerequisites&lt;/h2>
+&lt;p>To fully follow along with this post it&amp;rsquo;s assumed that you know how to work with &lt;code>node.js&lt;/code> and &lt;code>javascript&lt;/code>. Also, you will need to understand some key javascript concepts like &lt;code>async/await&lt;/code>.&lt;/p>
+&lt;p>Here are some resources if you need to learn these concepts:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU">Net Ninja: Node.js Crash Course Tutorial&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jx2TTZk3IGWKSbtugYdrlu">Net Ninja: Asynchronous Javascript Tutorial&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="project-setup">Project Setup&lt;/h1>
+&lt;p>To setup the project, create a new directory that we will be working in. After that, init a new node project using the following command:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm init -y
+&lt;/code>&lt;/pre>&lt;p>You will also need to install the &lt;a href="https://www.npmjs.com/package/@solana/web3.js">@solana/web3.js&lt;/a> dependency in order to work with the Candy Machine:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm i @solana/web3.js
+&lt;/code>&lt;/pre>&lt;p>For the sake of simplicity, we&amp;rsquo;ll be coding everything in one javascript function. So the following setup will be used:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="1" type="checkbox" />
+&lt;label for="1">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async function main() {
+// TODO: Write code
+}
+main();
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;h1 id="creating-a-blockchain-connection">Creating a Blockchain Connection&lt;/h1>
+&lt;p>It&amp;rsquo;s rather easy to connect to the Solana blockchain. The @solana/web3.js package handles this part almost entirely by itself. To connect to the Solana mainnet, you code the following in javascript:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="2" type="checkbox" />
+&lt;label for="2">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+import { Connection, clusterApiUrl } from &amp;#39;@solana/web3.js&amp;#39;;
+async function main() {
+const connection = new Connection(clusterApiUrl(&amp;#39;mainnet-beta&amp;#39;));
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>This connection is used to interact with the Solana blockchain. In order to write data to the chain you will need your own public and private key; however, for reading data from the chain, you don&amp;rsquo;t need your own key.&lt;/p>
+&lt;h1 id="getting-the-account-info">Getting the Account Info&lt;/h1>
+&lt;p>Getting a specific key&amp;rsquo;s information requires knowing the public key of a Candy Machine. For this post, lets use the public key &lt;code>9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&lt;/code>. Any specific Candy Machine V2 address will work though, not just this address.&lt;/p>
+&lt;p>To get started, we need to get the Account Info from the Candy Machine. Depending on the program type, this account information can look different and hold different values. The code for getting the Account Info is as follows:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="3" type="checkbox" />
+&lt;label for="3">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+import { Connection, clusterApiUrl, PublicKey } from &amp;#39;@solana/web3.js&amp;#39;;
+async function main() {
+// Generate public key
+const key = new PublicKey(&amp;#34;9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&amp;#34;);
+// Get account info with key
+const info = await connection.getAccountInfo(key);
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>We have to ensure that the string public key conforms to the cryptographic public key that is an acceptable parameter when getting the Account Info for the key. From this info, we can get some basic information about the account such as it&amp;rsquo;s &lt;code>Owner&lt;/code> and &lt;code>Lamports&lt;/code> (a lamport is a fraction of a SOL, the cryptocurrency used to pay gas fees). You can also pass this information to other Metaplex or Solana packages to get more information out of them (such as the &lt;code>CandyMachine&lt;/code> class from &lt;a href="https://www.npmjs.com/package/@metaplex-foundation/mpl-candy-machine">@metaplex-foundation/mpl-candy-machine&lt;/a>).&lt;/p>
+&lt;h1 id="parsing-the-data-buffer">Parsing the Data Buffer&lt;/h1>
+&lt;p>The information that we need about the NFTs are located in &lt;code>info.data&lt;/code>. However, there is one small problem that we need to work through first: &lt;code>data&lt;/code> is a very long buffer that we need to parse through. Thankfully, the information is chunked in such a way that it&amp;rsquo;s easy to parse through and get specific information about the Candy Machine.&lt;/p>
+&lt;p>Each NFT has a 4 byte separator, name length of 32 bytes, followed by another 4 byte separator, then followed by 200 bytes for the URL of the metadata. The NFT metadata starts at byte 717. So to get the first NFT from the buffer, the code would look like the following:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="4" type="checkbox" />
+&lt;label for="4">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async function main() {
+info.data.slice(717, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200);
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>In order to get just the first URL of the NFT, it&amp;rsquo;d look like the following:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="5" type="checkbox" />
+&lt;label for="5">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async function main() {
+let url = info.data.slice(717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200).toString();
+url = url.substring(0, url.indexOf(&amp;#39;\x00&amp;#39;));
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>The code for getting just the URL looks a little different because we are cleaning up the URL string to remove the empty buffer values of &lt;code>\x00&lt;/code>.&lt;/p>
+&lt;p>From this, you can abstract out the code so it loops to the end of the buffer to get all the NFT URLs in the Candy Machine. You can also setup pagination so you can only show 5 NFTs per page to speed up performance. To get the NFT metadata programmatically, all you will need to do is make a network request using &lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch&lt;/a> or &lt;a href="https://www.npmjs.com/package/axios">Axios&lt;/a>.&lt;/p>
+&lt;h1 id="conclusion">Conclusion&lt;/h1>
+&lt;p>In conclusion, Solana is a very popular blockchain for NFTs because of its low gas fees and official programs dedicated to innovating and working with the NFT protocol. A simple way to get started working with Solana is by working with the @solana/web3.js dependency to view the NFTs of a Candy Machine V2 address. Candy Machine is a type of program maintained by Metaplex.&lt;/p>
+&lt;p>Additionally, there are other packages that are maintained by Metaplex that will do similar things to this post such as their new &lt;a href="https://github.com/metaplex-foundation/js">Javascript SDK&lt;/a>. However, the point of this post was to work closer with the protocols, programs, and packages rather then it be abstracted out by the SDK which is why it was avoided in this post.&lt;/p>
+&lt;h1 id="full-code">Full Code&lt;/h1>
+&lt;div class="collapsable-code">
+&lt;input id="1" type="checkbox" />
+&lt;label for="1">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+import { Connection, clusterApiUrl, PublicKey } from &amp;#39;@solana/web3.js&amp;#39;;
+async function main() {
+const connection = new Connection(clusterApiUrl(&amp;#39;mainnet-beta&amp;#39;));
+// Generate public key
+const key = new PublicKey(&amp;#34;9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&amp;#34;);
+// Get account info with key
+const info = await connection.getAccountInfo(key);
+info.data.slice(717, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200);
+let url = info.data.slice(717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200).toString();
+url = url.substring(0, url.indexOf(&amp;#39;\x00&amp;#39;));
+}
+main();
+&lt;/code>&lt;/pre>
+&lt;/div></content></item></channel></rss>

@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>javascript on Nyble</title><link>https://nyble.blog/tags/javascript/</link><description>Recent content in javascript on Nyble</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 29 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://nyble.blog/tags/javascript/index.xml" rel="self" type="application/rss+xml"/><item><title>How to Programmatically get Candy Machine NFTs</title><link>https://nyble.blog/posts/getting-candy-machine-nfts/</link><pubDate>Sat, 29 Oct 2022 00:00:00 +0000</pubDate><guid>https://nyble.blog/posts/getting-candy-machine-nfts/</guid><description>Introduction Solana is another very popular blockchain that is drastically different from EVM-based blockchains. Instead of Proof of Stake, Solana uses Proof of History. This has made Solana, in comparison with Ethereum, faster and have lower gas fees. Additionally, Solana has a dedicated team working on NFT related programs called Metaplex. This team has created many different tools such as CLIs, customizable storefronts, and no-code solutions.
+Solana has become integral to the NFT community and innovation, therefore it&amp;rsquo;s important to learn how to work with Solana smart contract programs.</description><content>&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>&lt;a href="https://solana.com/">Solana&lt;/a> is another very popular blockchain that is drastically different from EVM-based blockchains. Instead of Proof of Stake, Solana uses Proof of History. This has made Solana, in comparison with Ethereum, faster and have lower gas fees. Additionally, Solana has a dedicated team working on NFT related programs called &lt;a href="https://www.metaplex.com/">Metaplex&lt;/a>. This team has created many different tools such as CLIs, customizable storefronts, and &lt;a href="https://studio.metaplex.com/">no-code&lt;/a> solutions.&lt;/p>
+&lt;p>Solana has become integral to the NFT community and innovation, therefore it&amp;rsquo;s important to learn how to work with Solana smart contract programs. A simple way to start is retrieving all the NFTs (minted or not) from a specific Candy Machine V2 address. &lt;a href="https://docs.metaplex.com/programs/candy-machine/overview">Candy Machine&lt;/a> is a type of program that operates similarly to a gumball machine. When people buy an NFT from the machine, it mints them a random NFT from the collection instead of a specific one.&lt;/p>
+&lt;h2 id="technology-requirements">Technology Requirements&lt;/h2>
+&lt;p>To follow along with this post you need the following installed on your machine:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://nodejs.org/en/download/">Node.js&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://code.visualstudio.com/Download">Visual Studio Code&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="prerequisites">Prerequisites&lt;/h2>
+&lt;p>To fully follow along with this post it&amp;rsquo;s assumed that you know how to work with &lt;code>node.js&lt;/code> and &lt;code>javascript&lt;/code>. Also, you will need to understand some key javascript concepts like &lt;code>async/await&lt;/code>.&lt;/p>
+&lt;p>Here are some resources if you need to learn these concepts:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU">Net Ninja: Node.js Crash Course Tutorial&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jx2TTZk3IGWKSbtugYdrlu">Net Ninja: Asynchronous Javascript Tutorial&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="project-setup">Project Setup&lt;/h1>
+&lt;p>To setup the project, create a new directory that we will be working in. After that, init a new node project using the following command:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm init -y
+&lt;/code>&lt;/pre>&lt;p>You will also need to install the &lt;a href="https://www.npmjs.com/package/@solana/web3.js">@solana/web3.js&lt;/a> dependency in order to work with the Candy Machine:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm i @solana/web3.js
+&lt;/code>&lt;/pre>&lt;p>For the sake of simplicity, we&amp;rsquo;ll be coding everything in one javascript function. So the following setup will be used:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="1" type="checkbox" />
+&lt;label for="1">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async function main() {
+// TODO: Write code
+}
+main();
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;h1 id="creating-a-blockchain-connection">Creating a Blockchain Connection&lt;/h1>
+&lt;p>It&amp;rsquo;s rather easy to connect to the Solana blockchain. The @solana/web3.js package handles this part almost entirely by itself. To connect to the Solana mainnet, you code the following in javascript:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="2" type="checkbox" />
+&lt;label for="2">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+import { Connection, clusterApiUrl } from &amp;#39;@solana/web3.js&amp;#39;;
+async function main() {
+const connection = new Connection(clusterApiUrl(&amp;#39;mainnet-beta&amp;#39;));
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>This connection is used to interact with the Solana blockchain. In order to write data to the chain you will need your own public and private key; however, for reading data from the chain, you don&amp;rsquo;t need your own key.&lt;/p>
+&lt;h1 id="getting-the-account-info">Getting the Account Info&lt;/h1>
+&lt;p>Getting a specific key&amp;rsquo;s information requires knowing the public key of a Candy Machine. For this post, lets use the public key &lt;code>9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&lt;/code>. Any specific Candy Machine V2 address will work though, not just this address.&lt;/p>
+&lt;p>To get started, we need to get the Account Info from the Candy Machine. Depending on the program type, this account information can look different and hold different values. The code for getting the Account Info is as follows:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="3" type="checkbox" />
+&lt;label for="3">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+import { Connection, clusterApiUrl, PublicKey } from &amp;#39;@solana/web3.js&amp;#39;;
+async function main() {
+// Generate public key
+const key = new PublicKey(&amp;#34;9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&amp;#34;);
+// Get account info with key
+const info = await connection.getAccountInfo(key);
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>We have to ensure that the string public key conforms to the cryptographic public key that is an acceptable parameter when getting the Account Info for the key. From this info, we can get some basic information about the account such as it&amp;rsquo;s &lt;code>Owner&lt;/code> and &lt;code>Lamports&lt;/code> (a lamport is a fraction of a SOL, the cryptocurrency used to pay gas fees). You can also pass this information to other Metaplex or Solana packages to get more information out of them (such as the &lt;code>CandyMachine&lt;/code> class from &lt;a href="https://www.npmjs.com/package/@metaplex-foundation/mpl-candy-machine">@metaplex-foundation/mpl-candy-machine&lt;/a>).&lt;/p>
+&lt;h1 id="parsing-the-data-buffer">Parsing the Data Buffer&lt;/h1>
+&lt;p>The information that we need about the NFTs are located in &lt;code>info.data&lt;/code>. However, there is one small problem that we need to work through first: &lt;code>data&lt;/code> is a very long buffer that we need to parse through. Thankfully, the information is chunked in such a way that it&amp;rsquo;s easy to parse through and get specific information about the Candy Machine.&lt;/p>
+&lt;p>Each NFT has a 4 byte separator, name length of 32 bytes, followed by another 4 byte separator, then followed by 200 bytes for the URL of the metadata. The NFT metadata starts at byte 717. So to get the first NFT from the buffer, the code would look like the following:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="4" type="checkbox" />
+&lt;label for="4">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async function main() {
+info.data.slice(717, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200);
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>In order to get just the first URL of the NFT, it&amp;rsquo;d look like the following:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="5" type="checkbox" />
+&lt;label for="5">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async function main() {
+let url = info.data.slice(717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200).toString();
+url = url.substring(0, url.indexOf(&amp;#39;\x00&amp;#39;));
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>The code for getting just the URL looks a little different because we are cleaning up the URL string to remove the empty buffer values of &lt;code>\x00&lt;/code>.&lt;/p>
+&lt;p>From this, you can abstract out the code so it loops to the end of the buffer to get all the NFT URLs in the Candy Machine. You can also setup pagination so you can only show 5 NFTs per page to speed up performance. To get the NFT metadata programmatically, all you will need to do is make a network request using &lt;a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch&lt;/a> or &lt;a href="https://www.npmjs.com/package/axios">Axios&lt;/a>.&lt;/p>
+&lt;h1 id="conclusion">Conclusion&lt;/h1>
+&lt;p>In conclusion, Solana is a very popular blockchain for NFTs because of its low gas fees and official programs dedicated to innovating and working with the NFT protocol. A simple way to get started working with Solana is by working with the @solana/web3.js dependency to view the NFTs of a Candy Machine V2 address. Candy Machine is a type of program maintained by Metaplex.&lt;/p>
+&lt;p>Additionally, there are other packages that are maintained by Metaplex that will do similar things to this post such as their new &lt;a href="https://github.com/metaplex-foundation/js">Javascript SDK&lt;/a>. However, the point of this post was to work closer with the protocols, programs, and packages rather then it be abstracted out by the SDK which is why it was avoided in this post.&lt;/p>
+&lt;h1 id="full-code">Full Code&lt;/h1>
+&lt;div class="collapsable-code">
+&lt;input id="1" type="checkbox" />
+&lt;label for="1">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">main.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+import { Connection, clusterApiUrl, PublicKey } from &amp;#39;@solana/web3.js&amp;#39;;
+async function main() {
+const connection = new Connection(clusterApiUrl(&amp;#39;mainnet-beta&amp;#39;));
+// Generate public key
+const key = new PublicKey(&amp;#34;9tQLFyLeaUwQ1PN2YDiFztZDxu4KT6px8CBYEapkshAD&amp;#34;);
+// Get account info with key
+const info = await connection.getAccountInfo(key);
+info.data.slice(717, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200);
+let url = info.data.slice(717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4, 717 &amp;#43; 4 &amp;#43; 32 &amp;#43; 4 &amp;#43; 200).toString();
+url = url.substring(0, url.indexOf(&amp;#39;\x00&amp;#39;));
+}
+main();
+&lt;/code>&lt;/pre>
+&lt;/div></content></item><item><title>Intro to Solidity</title><link>https://nyble.blog/posts/intro-solidity/</link><pubDate>Mon, 15 Aug 2022 00:00:00 +0000</pubDate><guid>https://nyble.blog/posts/intro-solidity/</guid><description>Introduction Blockchain technology is a new emerging technology revolutionizing many different industries including finance (DeFi), governance (DAOs), art (NFTs), and more. There are a few languages that are popular for coding projects on the blockchain, solidity is used for EVM-based (ethereum virtual machine) blockchains.
+One of the best ways to learn is by doing so in this tutorial we will focus on introducing the key concepts and fundamentals of solidity blockchain development with hardhat.</description><content>&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Blockchain technology is a new emerging technology revolutionizing many different industries including finance (DeFi), governance (DAOs), art (NFTs), and more. There are a few languages that are popular for coding projects on the blockchain, &lt;code>solidity&lt;/code> is used for EVM-based (ethereum virtual machine) blockchains.&lt;/p>
+&lt;p>One of the best ways to learn is by doing so in this tutorial we will focus on introducing the key concepts and fundamentals of solidity blockchain development with &lt;code>hardhat&lt;/code>.&lt;/p>
+&lt;p>All the code (with comments) can be found at this &lt;a href="https://github.com/EVogel1999/solidity-workshop">GitHub repository&lt;/a>.&lt;/p>
+&lt;h2 id="technology-requirements">Technology Requirements&lt;/h2>
+&lt;p>To run this tutorial you need the following installed on your machine:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://nodejs.org/en/download/">Node.js&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://code.visualstudio.com/Download">Visual Studio Code&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="prerequisites">Prerequisites&lt;/h2>
+&lt;p>To fully follow along with this tutorial it&amp;rsquo;s assumed that you know how to work with &lt;code>node.js&lt;/code> and &lt;code>javascript&lt;/code>. Also, you will need to understand some key javascript concepts like &lt;code>async/await&lt;/code>.&lt;/p>
+&lt;p>Here are some resources if you need to learn these concepts:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU">Net Ninja: Node.js Crash Course Tutorial&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.youtube.com/playlist?list=PL4cUxeGkcC9jx2TTZk3IGWKSbtugYdrlu">Net Ninja: Asynchronous Javascript Tutorial&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="project-setup">Project Setup&lt;/h1>
+&lt;p>To write solidity, we will be using the &lt;a href="https://hardhat.org/">hardhat&lt;/a> development environment. This environment contains everything that is needed to develop, test, and deploy solidity smart contracts.&lt;/p>
+&lt;p>To create a new hardhat project, first we need to initialize a folder using &lt;code>npm&lt;/code>:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm init -y
+&lt;/code>&lt;/pre>&lt;p>After that, we need to install a few dependencies and then the hardhat package will take care of the rest of the setup:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm install chai ethereum-waffle ethers @nomiclabs/hardhat-ethers @nomiclabs/hardhat-waffle @nomicfoundation/hardhat-toolbox
+npx hardhat
+&lt;/code>&lt;/pre>&lt;p>If you are prompted to choose a between &lt;code>javascript&lt;/code> or &lt;code>typescript&lt;/code>, choose &lt;strong>javascript&lt;/strong>. Select the option for setting up a empty hardhat project, you can use the other options too if you want to see a boilerplate example of a hardhat project.&lt;/p>
+&lt;h1 id="developing-the-smart-contract">Developing the Smart Contract&lt;/h1>
+&lt;p>The smart contract that we will be developing is influenced by the genre of cyberpunk. What we will be coding is a simple &lt;code>Job&lt;/code> smart contract that will do the following:&lt;/p>
+&lt;ul>
+&lt;li>Allow the job&amp;rsquo;s client to deposit ETH into the contract&lt;/li>
+&lt;li>Allow a team of people to accept the job&lt;/li>
+&lt;li>Allow the client to mark the job as finished&lt;/li>
+&lt;li>Auto pay the team who accepted the job&lt;/li>
+&lt;/ul>
+&lt;p>Create a new &lt;code>Job.sol&lt;/code> file in the &lt;code>contracts&lt;/code> folder and copy the following code into the file:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="1" type="checkbox" />
+&lt;label for="1">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+contract Job {
+// TODO: Write code
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>To create an empty smart contract, you need the following:&lt;/p>
+&lt;ul>
+&lt;li>A software license identifier (for now, leave it unlicensed)&lt;/li>
+&lt;li>The version of solidity you want to run&lt;/li>
+&lt;li>The contract name&lt;/li>
+&lt;/ul>
+&lt;h2 id="registering-the-client-and-depositing-eth">Registering the Client and Depositing ETH&lt;/h2>
+&lt;p>Before the client can deposit ETH into the smart contract, we first need to register who the client is. To do that, we set a client variable in the constructor.&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="2" type="checkbox" />
+&lt;label for="2">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+// Enums
+enum JobState {
+WAITING,
+ACCEPTED,
+COMPLETED
+}
+// Job information
+address private client;
+JobState private state = JobState.WAITING;
+constructor() {
+// Sends the job client to the deployer
+client = msg.sender;
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>&lt;code>msg&lt;/code> is a global variable that can be accessed in any &lt;code>function&lt;/code> or &lt;code>modifier&lt;/code>. The &lt;code>sender&lt;/code> attribute is the address (a wallet or contract address) that last called the contract. In this particular case, the person who &lt;em>deploys&lt;/em> the smart contract is the &lt;code>msg.sender&lt;/code>.&lt;/p>
+&lt;p>Now that we know who the job&amp;rsquo;s client is, we can write the &lt;code>deposit()&lt;/code> function.&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="3" type="checkbox" />
+&lt;label for="3">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+// Contract events
+event PaymentReceived(address from, uint256 amount);
+/**
+* Deposits ether to the contract
+*/
+function deposit() payable public isClient {
+// Emit an event saying the contract received the deposit
+emit PaymentReceived(msg.sender, msg.value);
+}
+/**
+* Check that the client isn&amp;#39;t making the transaction
+*/
+modifier notClient() {
+require(tx.origin != client, &amp;#34;Client can&amp;#39;t perform action&amp;#34;);
+_;
+}
+/**
+* Check that the client is making the transaction
+*/
+modifier isClient() {
+require(tx.origin == client, &amp;#34;Only client can perform action&amp;#34;);
+_;
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>To be able to deposit ETH into a contract the function has to be of type &lt;code>payable&lt;/code>. This is a modifier (similar to public/private visibility modifiers in other languages) that allows the function to accept token payments. We emit an &lt;code>event&lt;/code> when the client deposits ETH in order to acknowledge the deposit (we don&amp;rsquo;t need to emit an event for this but it&amp;rsquo;s good practice).&lt;/p>
+&lt;p>To make sure that only the client is depositing ETH to the contract, we need to create &lt;code>modifiers&lt;/code>. The two that are created above are &lt;code>notClient&lt;/code> and &lt;code>isClient&lt;/code>; what these two functions do is check that the person calling a particular function (such as &lt;code>deposit()&lt;/code>) is the client we defined earlier.&lt;/p>
+&lt;p>Like &lt;code>msg&lt;/code>, &lt;code>tx&lt;/code> is another global variable; &lt;code>origin&lt;/code> is an attribute on &lt;code>tx&lt;/code> that is similar to the &lt;code>msg.sender&lt;/code> attribute. The difference between &lt;code>msg.sender&lt;/code> and &lt;code>tx.origin&lt;/code> is who the &amp;ldquo;origin&amp;rdquo; wallet address that called the function. To better visualize this, a table below is provided. In the first scenario, contract A would register &lt;code>msg.sender&lt;/code> and &lt;code>tx.origin&lt;/code> as the same. However, in the second scenario contract B would register them as different.&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>Contract Call&lt;/th>
+&lt;th>&lt;code>msg.sender&lt;/code>&lt;/th>
+&lt;th>&lt;code>tx.origin&lt;/code>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Wallet -&amp;gt; A&lt;/td>
+&lt;td>Wallet&lt;/td>
+&lt;td>Wallet&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Wallet -&amp;gt; A -&amp;gt; B&lt;/td>
+&lt;td>A&lt;/td>
+&lt;td>Wallet&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;div class="collapsable-code">
+&lt;input id="4" type="checkbox" />
+&lt;label for="4">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+/**
+* Returns the total payout for the job
+*/
+function getPayout() public view returns (uint256) {
+return address(this).balance;
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>Last but not least we also need to provide a way to easily get the total payout for the job. This isn&amp;rsquo;t strictly necessary as you can do this with frontend javascript libraries but contains another modifier we haven&amp;rsquo;t come across yet. The &lt;code>view&lt;/code> modifier is a modifier that allows the address to read a value from the blockchain &lt;strong>gas-free&lt;/strong>.&lt;/p>
+&lt;p>In blockchain applications, every transaction onto the chain costs ETH (or the blockchain&amp;rsquo;s native token). So when you declare something as &lt;code>view&lt;/code> or &lt;code>pure&lt;/code> then that particular action isn&amp;rsquo;t changing the chain&amp;rsquo;s state, only reading from it and doesn&amp;rsquo;t count as a transaction.&lt;/p>
+&lt;h2 id="accepting-a-job">Accepting a Job&lt;/h2>
+&lt;p>Now that the client can deposit ETH for the job into the smart contract, we need to write the functionality for a group of people to accept the job. We need to include the ability to record the whole percentages of the cut for each team member.&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="5" type="checkbox" />
+&lt;label for="5">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+// Team information
+address[] private members;
+uint8[] private shares;
+/**
+* Accepts a job with a given team array and the shares for each team member
+*/
+function acceptJob(address[] memory m, uint8[] memory s) external notClient {
+// Check members and shares are defined and same length
+require(m.length == s.length, &amp;#34;Team members and shares must be same length&amp;#34;);
+require(m.length &amp;gt; 0, &amp;#34;Team must have at least one member&amp;#34;);
+require (state == JobState.WAITING, &amp;#34;Job must be awaiting team&amp;#34;);
+// Check the total shares is equal to 100 (100%)
+uint8 total = 0;
+for (uint i = 0; i &amp;lt; s.length; i&amp;#43;&amp;#43;) {
+total &amp;#43;= s[i];
+}
+require (total == 100, &amp;#34;Shares must total to 100&amp;#34;);
+// Set team members
+members = m;
+shares = s;
+// Set contract state to accepted
+state = JobState.ACCEPTED;
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>The first three &lt;code>require&lt;/code> statements check that the team members and shares match in length, that there is at least one member in the team, and that the job is waiting for someone to accept it.&lt;/p>
+&lt;p>The for loop checks that the shares array total to 100 (or 100%). If it passes those checks then the members and their shares are recorded and the job&amp;rsquo;s state moves to &amp;ldquo;accepted&amp;rdquo;, no other team can accept the job now.&lt;/p>
+&lt;h2 id="completing-a-job">Completing a Job&lt;/h2>
+&lt;p>The only thing that&amp;rsquo;s left for this contract is for the client to complete and close out the job, automating the payments to each team member. To do the payments safely and securely, we will be using another contract from a company called &lt;code>Open Zeppelin&lt;/code>. Open Zeppelin is a blockchain security company that offers a library of secure solidity contracts for the community to use.&lt;/p>
+&lt;p>We install these contracts through &lt;code>npm&lt;/code>:&lt;/p>
+&lt;pre tabindex="0">&lt;code>npm i @openzeppelin/contracts
+&lt;/code>&lt;/pre>&lt;p>Then we import it using the &lt;code>import&lt;/code> statement:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="6" type="checkbox" />
+&lt;label for="6">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+//SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+import &amp;#34;@openzeppelin/contracts/utils/Address.sol&amp;#34;;
+contract Job {
+// ...
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;div class="collapsable-code">
+&lt;input id="7" type="checkbox" />
+&lt;label for="7">
+&lt;span class="collapsable-code__language">solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-solidity" >&lt;code>
+/**
+* Completes a job and sends out the payment to the team
+*/
+function complete() external isClient {
+require(state == JobState.ACCEPTED, &amp;#34;Job must be accepted to complete&amp;#34;);
+// Set job state
+state = JobState.COMPLETED;
+// Payout each team member
+uint256 totalPayout = this.getPayout();
+for (uint i = 0; i &amp;lt; members.length; i&amp;#43;&amp;#43;) {
+uint256 cut = (totalPayout * shares[i]) / 100;
+Address.sendValue(payable(members[i]), cut);
+}
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>The &lt;code>complete()&lt;/code> function only needs to check that the job is in the accepted state so it can later be moved to completed. Then we iterate through each team member and automate payments to them using Open Zeppelin&amp;rsquo;s &lt;code>Address&lt;/code> contract.&lt;/p>
+&lt;p>What&amp;rsquo;s important to note here is that &lt;strong>solidity doesn&amp;rsquo;t have decimals&lt;/strong>, so the &lt;code>cut&lt;/code> needs to be a whole number. This is why the member&amp;rsquo;s share is multiplied by the total payout and divided by 100.&lt;/p>
+&lt;h1 id="creating-a-deploy-and-test-script">Creating a Deploy and Test Script&lt;/h1>
+&lt;p>One of the great features about blockchain development environments like hardhat is they provide the setup needed to run and test on a local ethereum node on your computer. This means you don&amp;rsquo;t need to deploy to the &lt;code>testnet&lt;/code> or &lt;code>mainnet&lt;/code> in order to test out your smart contracts.&lt;/p>
+&lt;h2 id="deploying-the-contract">Deploying the Contract&lt;/h2>
+&lt;p>To create a simple deploy/test script, create a new &lt;code>run.js&lt;/code> file in the &lt;code>scripts&lt;/code> folder:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="8" type="checkbox" />
+&lt;label for="8">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">run.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+async main () =&amp;gt; {
+// TODO: Write code
+}
+main()
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>In order to test the functions we have written, the first step is to deploy the contract to our local ethereum node. To do this, we use the &lt;code>ethers&lt;/code> library installed earlier:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="9" type="checkbox" />
+&lt;label for="9">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">run.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+// Init contract
+const [client, addr1, addr2] = await hre.ethers.getSigners();
+const JobFactory = await hre.ethers.getContractFactory(&amp;#39;Job&amp;#39;);
+let jobContract = await JobFactory.deploy();
+await jobContract.deployed();
+console.log(&amp;#39;Contract deployed to:&amp;#39;, jobContract.address);
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>When you start a node, 10 random wallets pre-loaded with test ETH are created onto the node. To test our contract, we want to save 3 of these. The first one in the array is always the default wallet that is connected to the node (hence why it&amp;rsquo;s named &lt;code>client&lt;/code>).&lt;/p>
+&lt;p>Ethers does most of the work for us when deploying a smart contract. What we need to do first is get the &lt;code>Job&lt;/code> factory, then we need to deploy it (using the provided ethers method). The last step we need to do is wait for the contract to be &lt;code>deployed&lt;/code>. With blockchain, &lt;strong>just because a transaction is added to the chain doesn&amp;rsquo;t mean that it was successful&lt;/strong>. The purpose of waiting for deployed is to ensure the transaction went through and that the contract is live on our local node.&lt;/p>
+&lt;h2 id="executing-functions-from-javascript">Executing Functions from Javascript&lt;/h2>
+&lt;p>Now that the contract has been deployed to our local ethereum node, we can interact with it using the &lt;code>ethers&lt;/code> library. To test this, lets deposit some ETH into the smart contract:&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="10" type="checkbox" />
+&lt;label for="10">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">run.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+// Constants
+const weth = 1000000000000000000;
+// Deposit ETH to the contract
+await jobContract.deposit({value: ethers.utils.parseEther(&amp;#39;1.3&amp;#39;)});
+const payout = await jobContract.getPayout();
+console.log(&amp;#39;Payout (ETH): &amp;#39;, payout / weth);
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>If you recall while coding &lt;code>Job.sol&lt;/code>, it was mentioned that solidity does not support decimals and the only way to work with fractions and decimals is to mimic the fraction using whole numbers. &lt;code>1 ETH&lt;/code> is equivalent to &lt;code>1,000,000,000,000,000,000&lt;/code>, anything less then this number is called &lt;code>WETH&lt;/code>. We can manually parse the WETH returned using the &lt;code>getPayout()&lt;/code> method or use an ethers library.&lt;/p>
+&lt;p>To deposit ETH into the contract programmatically, we need to pass a &lt;code>value&lt;/code> as a javascript object in the WETH equivalent number. When the &lt;code>deposit()&lt;/code> function is called, the amount of WETH will be automatically withdrawn from the client&amp;rsquo;s wallet.&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="11" type="checkbox" />
+&lt;label for="11">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">run.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+// Accept job
+jobContract = jobContract.connect(addr1);
+await jobContract.acceptJob([addr1.address, addr2.address], [75, 25]);
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>To accept the job, we can pass in arrays to the &lt;code>acceptJob()&lt;/code> function that represent the team and each member&amp;rsquo;s share. In the example above &lt;code>addr1&lt;/code> is receiving &lt;code>75%&lt;/code> of the total payout while &lt;code>addr2&lt;/code> is receiving &lt;code>25%&lt;/code>.&lt;/p>
+&lt;p>In order for this function to work, we need to simulate another wallet connecting and interacting with the contract (not just the client). To do that, we use an ethers function called &lt;code>connect()&lt;/code>.&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="12" type="checkbox" />
+&lt;label for="12">
+&lt;span class="collapsable-code__language">javascript&lt;/span>
+&lt;span class="collapsable-code__title">run.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-javascript" >&lt;code>
+// Complete job, check address balances
+jobContract = jobContract.connect(client);
+let preBal = await addr1.getBalance();
+console.log(&amp;#39;Pre-Job Value: &amp;#39;, preBal / weth);
+await jobContract.complete();
+let postBal = await addr1.getBalance();
+console.log(&amp;#39;Post-Job Value: &amp;#39;, postBal / weth);
+console.log(&amp;#39;Value Difference: &amp;#39;, (postBal - preBal) / weth);
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;p>The last function we need to check is &lt;code>complete()&lt;/code>. After we connect the client address back to the contract, we can call the &lt;code>complete()&lt;/code> function. To see if the team members were adequately paid we check their wallet&amp;rsquo;s &lt;code>balances&lt;/code> before and after completing the job.&lt;/p>
+&lt;h1 id="conclusion">Conclusion&lt;/h1>
+&lt;p>That&amp;rsquo;s it! In this tutorial we created a new hardhat project, smart contract, and deploy script. This covers most of the fundamentals of solidity development however there are more advanced concepts to learn that include but are not limited to the following:&lt;/p>
+&lt;ul>
+&lt;li>Design patterns&lt;/li>
+&lt;li>Unit testing&lt;/li>
+&lt;li>Cybersecurity&lt;/li>
+&lt;li>Frontend + smart contract integrations&lt;/li>
+&lt;/ul>
+&lt;p>Thank you for reading and I hope this was helpful!&lt;/p>
+&lt;h1 id="full-code">Full Code&lt;/h1>
+&lt;p>&lt;a href="https://github.com/EVogel1999/solidity-workshop">GitHub Repository&lt;/a>&lt;/p>
+&lt;div class="collapsable-code">
+&lt;input id="13" type="checkbox" />
+&lt;label for="13">
+&lt;span class="collapsable-code__language">Solidity&lt;/span>
+&lt;span class="collapsable-code__title">Job.sol&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-Solidity" >&lt;code>
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.0;
+import &amp;#34;@openzeppelin/contracts/utils/Address.sol&amp;#34;;
+contract Job {
+// Enums
+enum JobState {
+WAITING,
+ACCEPTED,
+COMPLETED
+}
+// Contract events
+event PaymentReceived(address from, uint256 amount);
+// Job information
+address private client;
+JobState private state = JobState.WAITING;
+// Team information
+address[] private members;
+uint8[] private shares;
+constructor() {
+// Sends the job client to the deployer
+client = msg.sender;
+}
+/**
+* Returns the total payout for the job
+*/
+function getPayout() public view returns (uint256) {
+return address(this).balance;
+}
+/**
+* Gets the current job state
+*/
+function getJobState() external view returns (string memory) {
+if (state == JobState.WAITING) {
+return &amp;#34;Waiting&amp;#34;;
+} else if (state == JobState.ACCEPTED) {
+return &amp;#34;Accepted&amp;#34;;
+} else {
+return &amp;#34;Completed&amp;#34;;
+}
+}
+/**
+* Deposits ether to the contract
+*/
+function deposit() payable public isClient {
+// Emit an event saying the contract received the deposit
+emit PaymentReceived(msg.sender, msg.value);
+}
+/**
+* Accepts a job with a given team array and the shares for each team member
+*/
+function acceptJob(address[] memory m, uint8[] memory s) external notClient {
+// Check members and shares are defined and same length
+require(m.length == s.length, &amp;#34;Team members and shares must be same length&amp;#34;);
+require(m.length &amp;gt; 0, &amp;#34;Team must have at least one member&amp;#34;);
+require (state == JobState.WAITING, &amp;#34;Job must be awaiting team&amp;#34;);
+// Check the total shares is equal to 100 (100%)
+uint8 total = 0;
+for (uint i = 0; i &amp;lt; s.length; i&amp;#43;&amp;#43;) {
+total &amp;#43;= s[i];
+}
+require (total == 100, &amp;#34;Shares must total to 100&amp;#34;);
+// Set team members
+members = m;
+shares = s;
+// Set contract state to accepted
+state = JobState.ACCEPTED;
+}
+/**
+* Completes a job and sends out the payment to the team
+*/
+function complete() external isClient {
+require(state == JobState.ACCEPTED, &amp;#34;Job must be accepted to complete&amp;#34;);
+// Set job state
+state = JobState.COMPLETED;
+// Payout each team member
+uint256 totalPayout = this.getPayout();
+for (uint i = 0; i &amp;lt; members.length; i&amp;#43;&amp;#43;) {
+uint256 cut = (totalPayout * shares[i]) / 100;
+Address.sendValue(payable(members[i]), cut);
+}
+}
+/**
+* Check that the client isn&amp;#39;t making the transaction
+*/
+modifier notClient() {
+require(tx.origin != client, &amp;#34;Client can&amp;#39;t perform action&amp;#34;);
+_;
+}
+/**
+* Check that the client is making the transaction
+*/
+modifier isClient() {
+require(tx.origin == client, &amp;#34;Only client can perform action&amp;#34;);
+_;
+}
+}
+&lt;/code>&lt;/pre>
+&lt;/div>
+&lt;div class="collapsable-code">
+&lt;input id="14" type="checkbox" />
+&lt;label for="14">
+&lt;span class="collapsable-code__language">Javascript&lt;/span>
+&lt;span class="collapsable-code__title">run.js&lt;/span>
+&lt;span class="collapsable-code__toggle" data-label-expand="Show" data-label-collapse="Hide">&lt;/span>
+&lt;/label>
+&lt;pre class="language-Javascript" >&lt;code>
+async main () =&amp;gt; {
+// Constants
+const weth = 1000000000000000000;
+// Init contract
+const [client, addr1, addr2] = await hre.ethers.getSigners();
+const JobFactory = await hre.ethers.getContractFactory(&amp;#39;Job&amp;#39;);
+let jobContract = await JobFactory.deploy();
+await jobContract.deployed();
+console.log(&amp;#39;Contract deployed to:&amp;#39;, jobContract.address);
+console.log();
+// Deposit ETH to the contract
+await jobContract.deposit({value: ethers.utils.parseEther(&amp;#39;1.3&amp;#39;)});
+const payout = await jobContract.getPayout();
+console.log(&amp;#39;Payout (ETH): &amp;#39;, payout / weth);
+console.log();
+// Accept job
+jobContract = jobContract.connect(addr1);
+await jobContract.acceptJob([addr1.address, addr2.address], [75, 25]);
+const state = await jobContract.getJobState();
+console.log(&amp;#39;Current Job State: &amp;#39;, state);
+console.log();
+// Complete job, check address balances
+jobContract = jobContract.connect(client);
+let preBal = await addr1.getBalance();
+console.log(&amp;#39;Pre-Job Value: &amp;#39;, preBal / weth);
+await jobContract.complete();
+let postBal = await addr1.getBalance();
+console.log(&amp;#39;Post-Job Value: &amp;#39;, postBal / weth);
+console.log(&amp;#39;Value Difference: &amp;#39;, (postBal - preBal) / weth);
+}
+main();
+&lt;/code>&lt;/pre>
+&lt;/div></content></item></channel></rss>
