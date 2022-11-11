@@ -1,12 +1,10 @@
-+++
-title = "Intro to Solidity"
-date = "2022-08-15"
-cover = "img/intro-solidity.jpeg"
-author = "Emily Vogel"
-draft = "False"
-tags = ["solidity", "ethereum", "javascript"]
-description = "Solidity is a new and upcoming language that is used for EVM-based blockchain programming.  Learn some of the fundamentals behind the language by setting up a new hardhat project and coding a simple smart contract!"
-+++
+---
+title: "Intro to Solidity"
+date: "2022-08-15"
+draft: "False"
+tags: ["solidity", "ethereum", "javascript"]
+description: "Solidity is a new and upcoming language that is used for EVM-based blockchain programming.  Learn some of the fundamentals behind the language by setting up a new hardhat project and coding a simple smart contract!"
+---
 
 # Introduction
 
@@ -62,14 +60,14 @@ The smart contract that we will be developing is influenced by the genre of cybe
 
 Create a new ```Job.sol``` file in the ```contracts``` folder and copy the following code into the file:
 
-{{< code language="solidity" title="Job.sol" id="1" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
 contract Job {
     // TODO: Write code
 }
-{{< /code >}}
+```
 
 To create an empty smart contract, you need the following:
 
@@ -81,7 +79,7 @@ To create an empty smart contract, you need the following:
 
 Before the client can deposit ETH into the smart contract, we first need to register who the client is.  To do that, we set a client variable in the constructor.
 
-{{< code language="solidity" title="Job.sol" id="2" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 // Enums
 enum JobState {
     WAITING,
@@ -97,13 +95,13 @@ constructor() {
     // Sends the job client to the deployer
     client = msg.sender;
 }
-{{< /code >}}
+```
 
 ```msg``` is a global variable that can be accessed in any ```function``` or ```modifier```.  The ```sender``` attribute is the address (a wallet or contract address) that last called the contract.  In this particular case, the person who *deploys* the smart contract is the ```msg.sender```.
 
 Now that we know who the job's client is, we can write the ```deposit()``` function.
 
-{{< code language="solidity" title="Job.sol" id="3" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 // Contract events
 event PaymentReceived(address from, uint256 amount);
 
@@ -130,7 +128,7 @@ modifier isClient() {
     require(tx.origin == client, "Only client can perform action");
     _;
 }
-{{< /code >}}
+```
 
 To be able to deposit ETH into a contract the function has to be of type ```payable```.  This is a modifier (similar to public/private visibility modifiers in other languages) that allows the function to accept token payments.  We emit an ```event``` when the client deposits ETH in order to acknowledge the deposit (we don't need to emit an event for this but it's good practice).
 
@@ -143,14 +141,14 @@ Like ```msg```, ```tx``` is another global variable; ```origin``` is an attribut
 | Wallet -> A | Wallet | Wallet |
 | Wallet -> A -> B | A | Wallet |
 
-{{< code language="solidity" title="Job.sol" id="4" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 /**
  * Returns the total payout for the job
  */
 function getPayout() public view returns (uint256) {
     return address(this).balance;
 }
-{{< /code >}}
+```
 
 Last but not least we also need to provide a way to easily get the total payout for the job.  This isn't strictly necessary as you can do this with frontend javascript libraries but contains another modifier we haven't come across yet.  The ```view``` modifier is a modifier that allows the address to read a value from the blockchain **gas-free**.
 
@@ -160,7 +158,7 @@ In blockchain applications, every transaction onto the chain costs ETH (or the b
 
 Now that the client can deposit ETH for the job into the smart contract, we need to write the functionality for a group of people to accept the job.  We need to include the ability to record the whole percentages of the cut for each team member.
 
-{{< code language="solidity" title="Job.sol" id="5" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 // Team information
 address[] private members;
 uint8[] private shares;
@@ -188,7 +186,7 @@ function acceptJob(address[] memory m, uint8[] memory s) external notClient {
     // Set contract state to accepted
     state = JobState.ACCEPTED;
 }
-{{< /code >}}
+```
 
 The first three ```require``` statements check that the team members and shares match in length, that there is at least one member in the team, and that the job is waiting for someone to accept it.
 
@@ -206,7 +204,7 @@ npm i @openzeppelin/contracts
 
 Then we import it using the ```import``` statement:
 
-{{< code language="solidity" title="Job.sol" id="6" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
@@ -215,9 +213,9 @@ import "@openzeppelin/contracts/utils/Address.sol";
 contract Job {
     // ...
 }
-{{< /code >}}
+```
 
-{{< code language="solidity" title="Job.sol" id="7" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 /**
  * Completes a job and sends out the payment to the team
  */
@@ -234,7 +232,7 @@ function complete() external isClient {
         Address.sendValue(payable(members[i]), cut);
     }
 }
-{{< /code >}}
+```
 
 The ```complete()``` function only needs to check that the job is in the accepted state so it can later be moved to completed.  Then we iterate through each team member and automate payments to them using Open Zeppelin's ```Address``` contract.
 
@@ -248,17 +246,17 @@ One of the great features about blockchain development environments like hardhat
 
 To create a simple deploy/test script, create a new ```run.js``` file in the ```scripts``` folder:
 
-{{< code language="javascript" title="run.js" id="8" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 async main () => {
     // TODO: Write code
 }
 
 main()
-{{< /code >}}
+```
 
 In order to test the functions we have written, the first step is to deploy the contract to our local ethereum node.  To do this, we use the ```ethers``` library installed earlier:
 
-{{< code language="javascript" title="run.js" id="9" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 // Init contract
 const [client, addr1, addr2] = await hre.ethers.getSigners();
 const JobFactory = await hre.ethers.getContractFactory('Job');
@@ -266,7 +264,7 @@ let jobContract = await JobFactory.deploy();
 await jobContract.deployed();
 
 console.log('Contract deployed to:', jobContract.address);
-{{< /code >}}
+```
 
 When you start a node, 10 random wallets pre-loaded with test ETH are created onto the node.  To test our contract, we want to save 3 of these.  The first one in the array is always the default wallet that is connected to the node (hence why it's named ```client```).
 
@@ -276,7 +274,7 @@ Ethers does most of the work for us when deploying a smart contract.  What we ne
 
 Now that the contract has been deployed to our local ethereum node, we can interact with it using the ```ethers``` library.  To test this, lets deposit some ETH into the smart contract:
 
-{{< code language="javascript" title="run.js" id="10" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 // Constants
 const weth = 1000000000000000000;
 
@@ -284,23 +282,23 @@ const weth = 1000000000000000000;
 await jobContract.deposit({value: ethers.utils.parseEther('1.3')});
 const payout = await jobContract.getPayout();
 console.log('Payout (ETH): ', payout / weth);
-{{< /code >}}
+```
 
 If you recall while coding ```Job.sol```, it was mentioned that solidity does not support decimals and the only way to work with fractions and decimals is to mimic the fraction using whole numbers.  ```1 ETH``` is equivalent to ```1,000,000,000,000,000,000```, anything less then this number is called ```WETH```.  We can manually parse the WETH returned using the ```getPayout()``` method or use an ethers library.
 
 To deposit ETH into the contract programmatically, we need to pass a ```value``` as a javascript object in the WETH equivalent number.  When the ```deposit()``` function is called, the amount of WETH will be automatically withdrawn from the client's wallet.
 
-{{< code language="javascript" title="run.js" id="11" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 // Accept job
 jobContract = jobContract.connect(addr1);
 await jobContract.acceptJob([addr1.address, addr2.address], [75, 25]);
-{{< /code >}}
+```
 
 To accept the job, we can pass in arrays to the ```acceptJob()``` function that represent the team and each member's share.  In the example above ```addr1``` is receiving ```75%``` of the total payout while ```addr2``` is receiving ```25%```.
 
 In order for this function to work, we need to simulate another wallet connecting and interacting with the contract (not just the client).  To do that, we use an ethers function called ```connect()```.
 
-{{< code language="javascript" title="run.js" id="12" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 // Complete job, check address balances
 jobContract = jobContract.connect(client);
 let preBal = await addr1.getBalance();
@@ -311,7 +309,7 @@ await jobContract.complete();
 let postBal = await addr1.getBalance();
 console.log('Post-Job Value: ', postBal / weth);
 console.log('Value Difference: ', (postBal - preBal) / weth);
-{{< /code >}}
+```
 
 The last function we need to check is ```complete()```.  After we connect the client address back to the contract, we can call the ```complete()``` function.  To see if the team members were adequately paid we check their wallet's ```balances``` before and after completing the job.
 
@@ -330,7 +328,7 @@ Thank you for reading and I hope this was helpful!
 
 [GitHub Repository](https://github.com/EVogel1999/solidity-workshop)
 
-{{< code language="Solidity" title="Job.sol" id="13" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```solidity
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
@@ -445,9 +443,9 @@ contract Job {
         _;
     }
 }
-{{< /code >}}
+```
 
-{{< code language="Javascript" title="run.js" id="14" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 async main () => {
     // Constants
     const weth = 1000000000000000000;
@@ -485,4 +483,4 @@ async main () => {
 }
     
 main();
-{{< /code >}}
+```

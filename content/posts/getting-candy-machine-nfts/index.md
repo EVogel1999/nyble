@@ -1,12 +1,10 @@
-+++
-title = "How to Programmatically get Candy Machine NFTs"
-date = "2022-10-29"
-cover = "img/candy-machine.jpeg"
-author = "Emily Vogel"
-draft = "False"
-tags = ["solana", "javascript"]
-description = "Solana is a very popular blockchain that is a lot more efficient that Ethereum.  The lower gas fees and higher transaction throughput made it ideal for NFTs and innovations surrounding them.  In this post, we'll learn how to programmatically retrieve NFT data using node and @solana/web3.js."
-+++
+---
+title: "How to Programmatically get Candy Machine NFTs"
+date: "2022-10-29"
+draft: "False"
+tags: ["solana", "javascript"]
+description: "Solana is a very popular blockchain that is a lot more efficient that Ethereum.  The lower gas fees and higher transaction throughput made it ideal for NFTs and innovations surrounding them.  In this post, we'll learn how to programmatically retrieve NFT data using node and @solana/web3.js."
+---
 
 # Introduction
 
@@ -46,26 +44,25 @@ npm i @solana/web3.js
 
 For the sake of simplicity, we'll be coding everything in one javascript function.  So the following setup will be used:
 
-{{< code language="javascript" title="main.js" id="1" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 async function main() {
     // TODO: Write code
 }
 
 main();
-{{< /code >}}
-
+```
 
 # Creating a Blockchain Connection
 
 It's rather easy to connect to the Solana blockchain.  The @solana/web3.js package handles this part almost entirely by itself.  To connect to the Solana mainnet, you code the following in javascript:
 
-{{< code language="javascript" title="main.js" id="2" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 import { Connection, clusterApiUrl } from '@solana/web3.js';
 
 async function main() {
     const connection = new Connection(clusterApiUrl('mainnet-beta'));
 }
-{{< /code >}}
+```
 
 This connection is used to interact with the Solana blockchain.  In order to write data to the chain you will need your own public and private key; however, for reading data from the chain, you don't need your own key.
 
@@ -75,7 +72,7 @@ Getting a specific key's information requires knowing the public key of a Candy 
 
 To get started, we need to get the Account Info from the Candy Machine.  Depending on the program type, this account information can look different and hold different values.  The code for getting the Account Info is as follows:
 
-{{< code language="javascript" title="main.js" id="3" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 import { Connection, clusterApiUrl, PublicKey } from '@solana/web3.js';
 
 async function main() {
@@ -85,7 +82,7 @@ async function main() {
     // Get account info with key
     const info = await connection.getAccountInfo(key);
 }
-{{< /code >}}
+```
 
 We have to ensure that the string public key conforms to the cryptographic public key that is an acceptable parameter when getting the Account Info for the key.  From this info, we can get some basic information about the account such as it's ```Owner``` and ```Lamports``` (a lamport is a fraction of a SOL, the cryptocurrency used to pay gas fees).  You can also pass this information to other Metaplex or Solana packages to get more information out of them (such as the ```CandyMachine``` class from [@metaplex-foundation/mpl-candy-machine](https://www.npmjs.com/package/@metaplex-foundation/mpl-candy-machine)).
 
@@ -95,20 +92,20 @@ The information that we need about the NFTs are located in ```info.data```.  How
 
 Each NFT has a 4 byte separator, name length of 32 bytes, followed by another 4 byte separator, then followed by 200 bytes for the URL of the metadata.  The NFT metadata starts at byte 717.  So to get the first NFT from the buffer, the code would look like the following:
 
-{{< code language="javascript" title="main.js" id="4" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 async function main() {
     info.data.slice(717, 717 + 4 + 32 + 4 + 200);
 }
-{{< /code >}}
+```
 
 In order to get just the first URL of the NFT, it'd look like the following:
 
-{{< code language="javascript" title="main.js" id="5" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 async function main() {
     let url = info.data.slice(717 + 4 + 32 + 4, 717 + 4 + 32 + 4 + 200).toString();
     url = url.substring(0, url.indexOf('\x00'));
 }
-{{< /code >}}
+```
 
 The code for getting just the URL looks a little different because we are cleaning up the URL string to remove the empty buffer values of ```\x00```.
 
@@ -122,7 +119,7 @@ Additionally, there are other packages that are maintained by Metaplex that will
 
 # Full Code
 
-{{< code language="javascript" title="main.js" id="1" expand="Show" collapse="Hide" isCollapsed="false" >}}
+```javascript
 import { Connection, clusterApiUrl, PublicKey } from '@solana/web3.js';
 
 async function main() {
@@ -140,4 +137,4 @@ async function main() {
 }
 
 main();
-{{< /code >}}
+```
