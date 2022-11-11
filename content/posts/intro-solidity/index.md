@@ -1,12 +1,14 @@
 ---
 title: "Intro to Solidity"
 date: "2022-08-15"
-draft: "False"
+draft: False
 tags: ["solidity", "ethereum", "javascript"]
-description: "Solidity is a new and upcoming language that is used for EVM-based blockchain programming.  Learn some of the fundamentals behind the language by setting up a new hardhat project and coding a simple smart contract!"
+showEdit: False
+showWordCount: False
+summary: "Solidity is a new and upcoming language that is used for EVM-based blockchain programming.  Learn some of the fundamentals behind the language by setting up a new hardhat project and coding a simple smart contract!"
 ---
 
-# Introduction
+## Introduction
 
 Blockchain technology is a new emerging technology revolutionizing many different industries including finance (DeFi), governance (DAOs), art (NFTs), and more.  There are a few languages that are popular for coding projects on the blockchain, ```solidity``` is used for EVM-based (ethereum virtual machine) blockchains.
 
@@ -14,14 +16,14 @@ One of the best ways to learn is by doing so in this tutorial we will focus on i
 
 All the code (with comments) can be found at this [GitHub repository](https://github.com/EVogel1999/solidity-workshop).
 
-## Technology Requirements
+### Technology Requirements
 
 To run this tutorial you need the following installed on your machine:
 
 - [Node.js](https://nodejs.org/en/download/)
 - [Visual Studio Code](https://code.visualstudio.com/Download)
 
-## Prerequisites
+### Prerequisites
 
 To fully follow along with this tutorial it's assumed that you know how to work with ```node.js``` and ```javascript```.  Also, you will need to understand some key javascript concepts like ```async/await```.
 
@@ -30,7 +32,7 @@ Here are some resources if you need to learn these concepts:
 - [Net Ninja: Node.js Crash Course Tutorial](https://www.youtube.com/playlist?list=PL4cUxeGkcC9jsz4LDYc6kv3ymONOKxwBU)
 - [Net Ninja: Asynchronous Javascript Tutorial](https://www.youtube.com/playlist?list=PL4cUxeGkcC9jx2TTZk3IGWKSbtugYdrlu)
 
-# Project Setup
+## Project Setup
 
 To write solidity, we will be using the [hardhat](https://hardhat.org/) development environment.  This environment contains everything that is needed to develop, test, and deploy solidity smart contracts.
 
@@ -49,7 +51,7 @@ npx hardhat
 
 If you are prompted to choose a between ```javascript``` or ```typescript```, choose **javascript**.  Select the option for setting up a empty hardhat project, you can use the other options too if you want to see a boilerplate example of a hardhat project.
 
-# Developing the Smart Contract
+## Developing the Smart Contract
 
 The smart contract that we will be developing is influenced by the genre of cyberpunk.  What we will be coding is a simple ```Job``` smart contract that will do the following:
 
@@ -75,7 +77,7 @@ To create an empty smart contract, you need the following:
 - The version of solidity you want to run
 - The contract name
 
-## Registering the Client and Depositing ETH
+### Registering the Client and Depositing ETH
 
 Before the client can deposit ETH into the smart contract, we first need to register who the client is.  To do that, we set a client variable in the constructor.
 
@@ -154,7 +156,7 @@ Last but not least we also need to provide a way to easily get the total payout 
 
 In blockchain applications, every transaction onto the chain costs ETH (or the blockchain's native token).  So when you declare something as ```view``` or ```pure``` then that particular action isn't changing the chain's state, only reading from it and doesn't count as a transaction.
 
-## Accepting a Job
+### Accepting a Job
 
 Now that the client can deposit ETH for the job into the smart contract, we need to write the functionality for a group of people to accept the job.  We need to include the ability to record the whole percentages of the cut for each team member.
 
@@ -192,7 +194,7 @@ The first three ```require``` statements check that the team members and shares 
 
 The for loop checks that the shares array total to 100 (or 100%).  If it passes those checks then the members and their shares are recorded and the job's state moves to "accepted", no other team can accept the job now.
 
-## Completing a Job
+### Completing a Job
 
 The only thing that's left for this contract is for the client to complete and close out the job, automating the payments to each team member.  To do the payments safely and securely, we will be using another contract from a company called ```Open Zeppelin```.  Open Zeppelin is a blockchain security company that offers a library of secure solidity contracts for the community to use.
 
@@ -238,11 +240,11 @@ The ```complete()``` function only needs to check that the job is in the accepte
 
 What's important to note here is that **solidity doesn't have decimals**, so the ```cut``` needs to be a whole number.  This is why the member's share is multiplied by the total payout and divided by 100.
 
-# Creating a Deploy and Test Script
+## Creating a Deploy and Test Script
 
 One of the great features about blockchain development environments like hardhat is they provide the setup needed to run and test on a local ethereum node on your computer.  This means you don't need to deploy to the ```testnet``` or ```mainnet``` in order to test out your smart contracts.
 
-## Deploying the Contract
+### Deploying the Contract
 
 To create a simple deploy/test script, create a new ```run.js``` file in the ```scripts``` folder:
 
@@ -270,7 +272,7 @@ When you start a node, 10 random wallets pre-loaded with test ETH are created on
 
 Ethers does most of the work for us when deploying a smart contract.  What we need to do first is get the ```Job``` factory, then we need to deploy it (using the provided ethers method).  The last step we need to do is wait for the contract to be ```deployed```.  With blockchain, **just because a transaction is added to the chain doesn't mean that it was successful**.  The purpose of waiting for deployed is to ensure the transaction went through and that the contract is live on our local node.
 
-## Executing Functions from Javascript
+### Executing Functions from Javascript
 
 Now that the contract has been deployed to our local ethereum node, we can interact with it using the ```ethers``` library.  To test this, lets deposit some ETH into the smart contract:
 
@@ -313,7 +315,7 @@ console.log('Value Difference: ', (postBal - preBal) / weth);
 
 The last function we need to check is ```complete()```.  After we connect the client address back to the contract, we can call the ```complete()``` function.  To see if the team members were adequately paid we check their wallet's ```balances``` before and after completing the job.
 
-# Conclusion
+## Conclusion
 
 That's it!  In this tutorial we created a new hardhat project, smart contract, and deploy script.  This covers most of the fundamentals of solidity development however there are more advanced concepts to learn that include but are not limited to the following:
 
@@ -324,7 +326,7 @@ That's it!  In this tutorial we created a new hardhat project, smart contract, a
 
 Thank you for reading and I hope this was helpful!
 
-# Full Code
+## Full Code
 
 [GitHub Repository](https://github.com/EVogel1999/solidity-workshop)
 
