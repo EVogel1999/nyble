@@ -3,8 +3,7 @@ title: "How to Programmatically get Candy Machine NFTs"
 date: "2022-10-29"
 draft: False
 tags: ["solana", "javascript"]
-showEdit: False
-showWordCount: False
+showSummary: True
 summary: "Solana is a very popular blockchain that is a lot more efficient that Ethereum.  The lower gas fees and higher transaction throughput made it ideal for NFTs and innovations surrounding them.  In this post, we'll learn how to programmatically retrieve NFT data using node and @solana/web3.js."
 ---
 

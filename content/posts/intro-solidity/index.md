@@ -3,8 +3,7 @@ title: "Intro to Solidity"
 date: "2022-08-15"
 draft: False
 tags: ["solidity", "ethereum", "javascript"]
-showEdit: False
-showWordCount: False
+showSummary: True
 summary: "Solidity is a new and upcoming language that is used for EVM-based blockchain programming.  Learn some of the fundamentals behind the language by setting up a new hardhat project and coding a simple smart contract!"
 ---
 
